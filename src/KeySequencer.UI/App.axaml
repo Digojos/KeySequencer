@@ -1,0 +1,13 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="KeySequencer.UI.App"
+             RequestedThemeVariant="Dark">
+             <!-- Forced Dark: the whole UI is hand-styled for a dark palette, so any Fluent-default
+                  control part we didn't explicitly style (e.g. the ComboBox's internal editable
+                  TextBox, dropdown popup) must not fall back to the Light theme's white default
+                  when the OS is in light mode. "Default" would follow the system theme variant. -->
+
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+</Application>

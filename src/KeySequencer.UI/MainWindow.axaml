@@ -1,0 +1,353 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignWidth="720"
+        d:DesignHeight="700"
+        Width="720"
+        Height="700"
+        MinWidth="620"
+        MinHeight="600"
+        Background="#24262D"
+        x:Class="KeySequencer.UI.MainWindow"
+        Icon="avares://KeySequencer.UI/Assets/app.ico"
+        Title="Key Sequencer">
+    <Window.Resources>
+        <LinearGradientBrush x:Key="HeaderGradient" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Offset="0" Color="#FF4A3C" />
+            <GradientStop Offset="0.33" Color="#D946EF" />
+            <GradientStop Offset="0.66" Color="#3BDA9A" />
+            <GradientStop Offset="1" Color="#24A2C9" />
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="PanelBrush" Color="#2F3138" />
+        <SolidColorBrush x:Key="StrokeBrush" Color="#666A73" />
+    </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#F2F2F2" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="TextBox:focus">
+            <Setter Property="Background" Value="#3A3D45" />
+            <Setter Property="Foreground" Value="#F5F5F5" />
+            <Setter Property="CaretBrush" Value="#F5F5F5" />
+            <Setter Property="BorderBrush" Value="#24A2C9" />
+            <Setter Property="SelectionBrush" Value="#335A7A" />
+        </Style>
+
+        <Style Selector="TextBox:readonly">
+            <Setter Property="Background" Value="#3A3D45" />
+            <Setter Property="Foreground" Value="#F5F5F5" />
+            <Setter Property="BorderBrush" Value="#666A73" />
+        </Style>
+
+        <Style Selector="TextBox:readonly:focus">
+            <Setter Property="Background" Value="#3A3D45" />
+            <Setter Property="Foreground" Value="#F5F5F5" />
+            <Setter Property="BorderBrush" Value="#24A2C9" />
+        </Style>
+
+        <Style Selector="ComboBox.hotkey-combo">
+            <Setter Property="Background" Value="#3A3D45" />
+            <Setter Property="BorderBrush" Value="#666A73" />
+            <Setter Property="Foreground" Value="#F5F5F5" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="Width" Value="180" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="ComboBox.hotkey-combo /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="#3A3D45" />
+        </Style>
+
+        <Style Selector="ComboBox.hotkey-combo:focus /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="#3A3D45" />
+        </Style>
+
+        <Style Selector="ComboBox.hotkey-combo:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="#3A3D45" />
+        </Style>
+
+        <!-- IsEditable="True" swaps the ComboBox's display TextBlock for an inner editable
+             TextBox (PART_EditableTextBox) while typing/focused - it isn't reached by the
+             ComboBox's own /template/ Border selectors above, so it needs its own styling.
+             Its background still renders Light-themed regardless of the Background setter
+             below (FluentTheme internals for this part resist overriding), so the foreground
+             is forced dark here to stay readable against that white background. -->
+        <Style Selector="ComboBox.hotkey-combo /template/ TextBox#PART_EditableTextBox">
+            <Setter Property="Background" Value="#3A3D45" />
+            <Setter Property="Foreground" Value="#1A1A1A" />
+            <Setter Property="CaretBrush" Value="#1A1A1A" />
+            <Setter Property="SelectionBrush" Value="#B7D6EA" />
+        </Style>
+
+        <Style Selector="ComboBox.hotkey-combo /template/ TextBox#PART_EditableTextBox /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="#3A3D45" />
+        </Style>
+
+        <Style Selector="ComboBoxItem">
+            <Setter Property="Background" Value="#3A3D45" />
+            <Setter Property="Foreground" Value="#F5F5F5" />
+        </Style>
+
+        <Style Selector="ComboBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#4A4C52" />
+        </Style>
+
+        <Style Selector="ComboBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#4A4C52" />
+        </Style>
+
+        <Style Selector="Button.side-action">
+            <Setter Property="Height" Value="44" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="Padding" Value="14,0" />
+        </Style>
+
+        <Style Selector="Button.red">
+            <Setter Property="Background" Value="#F44336" />
+        </Style>
+
+        <Style Selector="Button.green">
+            <Setter Property="Background" Value="#43A047" />
+        </Style>
+    </Window.Styles>
+
+    <Grid Margin="16" RowDefinitions="Auto,*">
+        <Border
+                Height="86"
+                Background="{StaticResource HeaderGradient}"
+                CornerRadius="10"
+                Margin="0,0,0,12">
+            <TextBlock Classes="section-title" Text="Key Sequencer" />
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="14">
+                <Border Background="#2E3138"
+                        BorderBrush="#5C616B"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="10">
+                    <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="10" VerticalAlignment="Center">
+                        <Button x:Name="ToggleStatusButton"
+                                Grid.Column="0"
+                                Classes="side-action red"
+                                Width="200"
+                                Content="DESLIGADO"
+                                Click="OnToggleStatusClick" />
+                        <Button x:Name="ResetButton"
+                                Grid.Column="1"
+                                Classes="side-action red"
+                                Width="140"
+                                Content="Reset"
+                                Click="OnResetClick" />
+
+                        <TextBlock x:Name="StatusText"
+                                   Grid.Column="2"
+                                   Text="Status: pronto"
+                                   Foreground="#E8E8E8"
+                                   FontSize="18"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                </Border>
+
+                <Border Background="{StaticResource PanelBrush}"
+                        BorderBrush="{StaticResource StrokeBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="12">
+                    <StackPanel Spacing="14">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Background="#3A3D45" BorderBrush="#666A73" BorderThickness="1" CornerRadius="10" Padding="16,10">
+                                <TextBlock Text="Tecla de disparo:" FontSize="24" FontWeight="SemiBold" Foreground="#F4F4F4" />
+                            </Border>
+                            <ComboBox x:Name="HotkeyComboBox"
+                                      Classes="hotkey-combo"
+                                      IsEditable="True"
+                                      Text="SPACE">
+                                <ComboBoxItem>SPACE</ComboBoxItem>
+                                <ComboBoxItem>A</ComboBoxItem>
+                                <ComboBoxItem>B</ComboBoxItem>
+                                <ComboBoxItem>C</ComboBoxItem>
+                                <ComboBoxItem>D</ComboBoxItem>
+                                <ComboBoxItem>E</ComboBoxItem>
+                                <ComboBoxItem>F</ComboBoxItem>
+                                <ComboBoxItem>G</ComboBoxItem>
+                                <ComboBoxItem>H</ComboBoxItem>
+                                <ComboBoxItem>I</ComboBoxItem>
+                                <ComboBoxItem>J</ComboBoxItem>
+                                <ComboBoxItem>K</ComboBoxItem>
+                                <ComboBoxItem>L</ComboBoxItem>
+                                <ComboBoxItem>M</ComboBoxItem>
+                                <ComboBoxItem>N</ComboBoxItem>
+                                <ComboBoxItem>O</ComboBoxItem>
+                                <ComboBoxItem>P</ComboBoxItem>
+                                <ComboBoxItem>Q</ComboBoxItem>
+                                <ComboBoxItem>R</ComboBoxItem>
+                                <ComboBoxItem>S</ComboBoxItem>
+                                <ComboBoxItem>T</ComboBoxItem>
+                                <ComboBoxItem>U</ComboBoxItem>
+                                <ComboBoxItem>V</ComboBoxItem>
+                                <ComboBoxItem>W</ComboBoxItem>
+                                <ComboBoxItem>X</ComboBoxItem>
+                                <ComboBoxItem>Y</ComboBoxItem>
+                                <ComboBoxItem>Z</ComboBoxItem>
+                                <ComboBoxItem>'</ComboBoxItem>
+                                <ComboBoxItem>"</ComboBoxItem>
+                                <ComboBoxItem>F1</ComboBoxItem>
+                                <ComboBoxItem>F2</ComboBoxItem>
+                                <ComboBoxItem>F3</ComboBoxItem>
+                                <ComboBoxItem>F4</ComboBoxItem>
+                                <ComboBoxItem>F5</ComboBoxItem>
+                                <ComboBoxItem>F6</ComboBoxItem>
+                                <ComboBoxItem>F7</ComboBoxItem>
+                                <ComboBoxItem>F8</ComboBoxItem>
+                                <ComboBoxItem>F9</ComboBoxItem>
+                                <ComboBoxItem>F10</ComboBoxItem>
+                                <ComboBoxItem>F11</ComboBoxItem>
+                                <ComboBoxItem>F12</ComboBoxItem>
+                                <ComboBoxItem>DELETE</ComboBoxItem>
+                                <ComboBoxItem>INSERT</ComboBoxItem>
+                                <ComboBoxItem>HOME</ComboBoxItem>
+                                <ComboBoxItem>END</ComboBoxItem>
+                                <ComboBoxItem>PAGEUP</ComboBoxItem>
+                                <ComboBoxItem>PAGEDOWN</ComboBoxItem>
+                            </ComboBox>
+                            <CheckBox x:Name="HotkeyRequiresCtrl" Content="Ctrl" FontSize="20" Foreground="#E8E8E8" />
+                            <CheckBox x:Name="HotkeyRequiresAlt" Content="Alt" FontSize="20" Foreground="#E8E8E8" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Background="#3A3D45" BorderBrush="#666A73" BorderThickness="1" CornerRadius="10" Padding="16,10">
+                                <TextBlock Text="Ping:" FontSize="24" FontWeight="SemiBold" Foreground="#F4F4F4" />
+                            </Border>
+                            <TextBox x:Name="PingTextBox"
+                                     Width="130"
+                                     Height="44"
+                                     Background="#3A3D45"
+                                     BorderBrush="#666A73"
+                                     Foreground="#F5F5F5"
+                                     CaretBrush="#F5F5F5"
+                                     FontSize="22"
+                                     FontWeight="SemiBold"
+                                     Text="0" />
+                            <Border Background="#3A3D45" BorderBrush="#666A73" BorderThickness="1" CornerRadius="10" Padding="18,10">
+                                <TextBlock Text="ms entre teclas" FontSize="18" Foreground="#E8E8E8" />
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{StaticResource PanelBrush}"
+                        BorderBrush="{StaticResource StrokeBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="12">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Sequência de teclas" FontSize="20" FontWeight="SemiBold" Foreground="#F7F8FA" />
+                        <TextBlock Text="Uma tecla por linha, na ordem de execução. Combine modificadores com &quot;+&quot;, ex: ALT+A ou CTRL+Q."
+                                   FontSize="13"
+                                   Foreground="#B9BDC6"
+                                   TextWrapping="Wrap" />
+                        <TextBox x:Name="KeysTextBox"
+                                 AcceptsReturn="True"
+                                 TextWrapping="NoWrap"
+                                 Height="200"
+                                 Background="#3A3D45"
+                                 BorderBrush="#666A73"
+                                 Foreground="#F5F5F5"
+                                 CaretBrush="#F5F5F5"
+                                 FontSize="20"
+                                 FontFamily="Consolas,monospace"
+                                 Padding="10" />
+
+                        <Button x:Name="PreviewButton"
+                                Content="Gerar prévia"
+                                Height="44"
+                                CornerRadius="8"
+                                FontSize="22"
+                                FontWeight="SemiBold"
+                                Background="#3B82F6"
+                                Foreground="White"
+                                Click="OnPreviewClick" />
+
+                        <TextBox x:Name="PreviewBox"
+                                 Height="46"
+                                 IsReadOnly="True"
+                                 Background="#3A3D45"
+                                 BorderBrush="#666A73"
+                                 Foreground="#F5F5F5"
+                                 FontSize="20"
+                                 FontWeight="SemiBold"
+                                 Text="(sem prévia)" />
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#3A3D45" BorderBrush="#666A73" BorderThickness="1" CornerRadius="6" Padding="10,8">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Salvar / Importar configuração"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   Foreground="#B9BDC6" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBox x:Name="ConfigNameBox"
+                                     Width="200"
+                                     Height="36"
+                                     Background="#2E3138"
+                                     BorderBrush="#666A73"
+                                     Foreground="#F5F5F5"
+                                     CaretBrush="#F5F5F5"
+                                     FontSize="15"
+                                     Padding="8,4"
+                                     PlaceholderText="nome da configuração..." />
+                            <Button Content="Salvar"
+                                    Height="36"
+                                    Padding="14,0"
+                                    CornerRadius="6"
+                                    FontSize="15"
+                                    FontWeight="SemiBold"
+                                    Background="#43A047"
+                                    Foreground="White"
+                                    Click="OnSaveConfigClick" />
+                            <Button Content="Importar"
+                                    Height="36"
+                                    Padding="14,0"
+                                    CornerRadius="6"
+                                    FontSize="15"
+                                    FontWeight="SemiBold"
+                                    Background="#546E7A"
+                                    Foreground="White"
+                                    Click="OnLoadConfigClick" />
+                            <Button Content="Abrir pasta"
+                                    Height="36"
+                                    Padding="14,0"
+                                    CornerRadius="6"
+                                    FontSize="15"
+                                    FontWeight="SemiBold"
+                                    Background="#546E7A"
+                                    Foreground="White"
+                                    Click="OnOpenConfigFolderClick" />
+                        </StackPanel>
+                        <TextBlock x:Name="SaveStatusText"
+                                   Text=""
+                                   FontSize="14"
+                                   Foreground="#B9BDC6"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
